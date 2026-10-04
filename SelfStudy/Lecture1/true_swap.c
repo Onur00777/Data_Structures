@@ -1,17 +1,23 @@
-/*
-x ve y değerleri swap olacak çünkü fonk. içine memory'deki adresleri verilmiş olacak. 
-*/
-
 #include <stdio.h>
 
-static void swap(int* const x, int* const y){
-    int temp;
-    temp = *x; *x = *y; *y = temp; //direkt orijinal değer değişir. 
+void falsedoubler(int x, int y){
+    x*=2;
+    y*=2;
+}
+
+void truedoubler(int* x, int* y){
+    *x*=2;
+    *y*=2;
 }
 
 int main(){
-    int x=60; int y=32;
-    swap(&x, &y);
+    int x = 40, y = 60;
+    falsedoubler(x, y);
     printf("x = %d, y = %d", x, y);
+
+    truedoubler(&x, &y); 
+    printf("x = %d, y = %d", x, y);
+
+
     return 0;
 }
