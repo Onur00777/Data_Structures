@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void doubleSides(float* const pabc){
+void doubleSides(float* const pabc){ //float pointer.
     pabc[0]*=2.00;
     pabc[1]*=2.00;
     pabc[2]*=2.00;
