@@ -4,10 +4,68 @@
 #include "cells.h"
 
 
-CellGrid *gridcreate(int rows, int cols, int initvalue){ //devam
+CellGrid *gridcreate(int rows, int cols, int initvalue){
+    if (rows <= 0 || cols <= 0){
+        return NULL;
+    }
+
     CellGrid* grid = malloc(sizeof(CellGrid));
-    grid->rows = rows;
-    grid->cols = cols;
+    if (grid == NULL){
+        return NULL;
+    }
+    grid->rows = (size_t)rows;
+    grid->cols = (size_t)cols;
+    grid->head = NULL;
+
+    /* Geçici tablo: komşuyu bulmak için. Düğümler değil, sadece adresler.
+       Fonksiyon dönmeden free edilir; ızgara bu tabloyu tutmaz. */
+    size_t count = (size_t)rows * (size_t)cols;
+    Node **cells = malloc(count * sizeof(Node *));
+    if (cells == NULL){
+        free(grid);
+        return NULL;
+    }
+
+    for (int r = 0; r < rows; r++){
+        for (int c = 0; c < cols; c++){
+            Node *node = malloc(sizeof(Node));
+            if (node == NULL){
+                size_t made = (size_t)r * (size_t)cols + (size_t)c;
+                for (size_t i = 0; i < made; i++){
+                    free(cells[i]);
+                }
+                free(cells);
+                free(grid);
+                return NULL;
+            }
+            node->value = initvalue;
+            node->up = NULL;
+            node->down = NULL;
+            node->left = NULL;
+            node->right = NULL;
+            cells[(size_t)r * (size_t)cols + (size_t)c] = node;
+        }
+    }
+
+    for (int r = 0; r < rows; r++){
+        for (int c = 0; c < cols; c++){
+            Node *node = cells[(size_t)r * (size_t)cols + (size_t)c];
+            if (c + 1 < cols){
+                Node *right = cells[(size_t)r * (size_t)cols + (size_t)c + 1];
+                node->right = right;
+                right->left = node;
+            }
+            if (r + 1 < rows){
+                Node *down = cells[((size_t)r + 1) * (size_t)cols + (size_t)c];
+                node->down = down;
+                down->up = node;
+            }
+        }
+    }
+
+    /* Merkez: fiziksel satır rows/2, sütun cols/2. Çift boyutta alt ve sağ orta. */
+    grid->head = cells[(size_t)(rows / 2) * (size_t)cols + (size_t)(cols / 2)];
+    free(cells);
     return grid;
 }
 
@@ -51,7 +109,7 @@ Node *getnode(CellGrid *g, int col, int row){
         for(int i = 0; i<row; i++){
             search = search->down; //aşağı git
         }
-    } else if(col<0){
+    } else if(row<0){ 
         for(int i = 0; i>row; i--){
             search = search->up; //yukarı git
         }
