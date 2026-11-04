@@ -117,8 +117,104 @@ Node *getnode(CellGrid *g, int col, int row){
     return search;
 
 }
-void deleterow(CellGrid *g, int rowindex); //yap
-void deletecol(CellGrid *g, int colindex); //yap
+/* Kalan ızgarada head'i yeniden seçer: fiziksel satır rows/2, sütun cols/2. */
+static void sethead(CellGrid *g, Node *node){
+    while(node->up != NULL){
+        node = node->up;
+    }
+    while(node->left != NULL){
+        node = node->left;
+    }
+
+    for(size_t r = 0; r < g->rows / 2; r++){
+        node = node->down;
+    }
+    for(size_t c = 0; c < g->cols / 2; c++){
+        node = node->right;
+    }
+    g->head = node;
+}
+
+void deleterow(CellGrid *g, int rowindex){
+    if(g == NULL || g->head == NULL || g->rows <= 1){
+        return;
+    }
+
+    int min_row = -((int)g->rows / 2);
+    int max_row = (int)g->rows - 1 - ((int)g->rows / 2);
+    if(rowindex < min_row || rowindex > max_row){
+        return;
+    }
+
+    Node *row = getnode(g, 0, rowindex);
+    if(row == NULL){
+        return;
+    }
+    while(row->left != NULL){
+        row = row->left;
+    }
+
+    /* Son satır silinmediği için üst ya da alt komşu duruyordur. */
+    Node *anchor = (row->up != NULL) ? row->up : row->down;
+    if(anchor == NULL){
+        return;
+    }
+
+    while(row != NULL){
+        Node *next = row->right;
+        if(row->up != NULL){
+            row->up->down = row->down;
+        }
+        if(row->down != NULL){
+            row->down->up = row->up;
+        }
+        free(row);
+        row = next;
+    }
+
+    g->rows -= 1;
+    sethead(g, anchor);
+}
+
+void deletecol(CellGrid *g, int colindex){
+    if(g == NULL || g->head == NULL || g->cols <= 1){
+        return;
+    }
+
+    int min_col = -((int)g->cols / 2);
+    int max_col = (int)g->cols - 1 - ((int)g->cols / 2);
+    if(colindex < min_col || colindex > max_col){
+        return;
+    }
+
+    Node *col = getnode(g, colindex, 0);
+    if(col == NULL){
+        return;
+    }
+    while(col->up != NULL){
+        col = col->up;
+    }
+
+    Node *anchor = (col->left != NULL) ? col->left : col->right;
+    if(anchor == NULL){
+        return;
+    }
+
+    while(col != NULL){
+        Node *next = col->down;
+        if(col->left != NULL){
+            col->left->right = col->right;
+        }
+        if(col->right != NULL){
+            col->right->left = col->left;
+        }
+        free(col);
+        col = next;
+    }
+
+    g->cols -= 1;
+    sethead(g, anchor);
+}
 int sumgrid(CellGrid *g){
     if(g == NULL){
         return 0;

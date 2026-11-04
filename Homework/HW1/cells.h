@@ -1,6 +1,8 @@
 #ifndef CELLS_H
 #define CELLS_H
 
+#include <stddef.h>
+
 typedef struct Node {
     int value;
     struct Node *up, *down, *left, *right;
