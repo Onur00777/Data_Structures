@@ -16,3 +16,23 @@ int count_single_child_nodes(NODE* root){
 
     return one_or_zero + count_single_child_nodes(root->left) + count_single_child_nodes(root->right);
 }
+
+
+/*
+int count_single_child_nodes(NODE* root) {
+
+    if (root == NULL)
+        return 0; //Tree boşsa child sayısı da 0'dır
+
+    int count = 0;
+
+    if ((root->left != NULL && root->right == NULL)
+        || (root->left == NULL && root->right != NULL)) { 
+
+        count = 1;
+    }
+
+    return count
+        + count_single_child_nodes(root->left)
+        + count_single_child_nodes(root->right);
+}*/

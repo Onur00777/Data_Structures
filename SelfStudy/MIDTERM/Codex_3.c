@@ -38,3 +38,35 @@ void swap_adjacent(NODE** list_head, int value){
         current = current->next;
     }
 }
+/*
+void swap_adjacent(NODE** head, int value) {
+
+    if (head == NULL || *head == NULL)
+        return;
+
+    NODE* first = *head;
+
+    while (first != NULL && first->data != value)
+        first = first->next;
+
+    if (first == NULL || first->next == NULL)
+        return;
+
+    NODE* second = first->next;
+    NODE* before = first->prev;
+    NODE* after = second->next;
+
+    first->next = after;
+    first->prev = second;
+
+    second->next = first;
+    second->prev = before;
+
+    if (after != NULL)
+        after->prev = first;
+
+    if (before != NULL)
+        before->next = second;
+    else
+        *head = second;
+} */
