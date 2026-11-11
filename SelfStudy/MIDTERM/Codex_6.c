@@ -29,8 +29,6 @@ int sum_leaf_nodes(NODE* root){
         return root->data;
     }
     return sum_leaf_nodes(root->right) + sum_leaf_nodes(root->left);
-    
-    
 }
 
 
